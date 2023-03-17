@@ -1,59 +1,12 @@
-name: Build and Push Docker Image
-
-on:
-  workflow_dispatch:
-#   push:
-#     branches:
-#       - main
- 
-env:
-  HELM_CHART: nodejs-chart
-  HELM_NAMESPACE: demochart
- 
+on: push
+  
 jobs:
-  build-and-push:
+  build-node:
     runs-on: ubuntu-latest
+    container: node:16
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2   
-      - name: Login to Azure Container Registry
-        uses: azure/docker-login@v1
-        with:
-          login-server: cicdpipeline.azurecr.io
-          username: ${{ secrets.ACR_USERNAME }}
-          password: ${{ secrets.ACR_PASSWORD }}
- #         
-      - name: Login to Azure
-        uses: Azure/login@v1
-        with:
-         creds: ${{ secrets.AZURE_CREDENTIALS }}
-      - name: Get AKS credentials
-        run: az aks get-credentials --resource-group rg-cicdpipeline-eus-action --name aks-cluster-pipeline    
- #        
-      - name: Build and push Docker images
-        uses: docker/build-push-action@v2
-        with:
-          context: /home/runner/work/ci-cd-sathish/ci-cd-sathish/src #ci-cd_sathish two times mention pannaum
-          push: true
-          tags: |
-            cicdpipeline.azurecr.io/python:${{ github.run_number }}   
-        # docker image name = cicdpiipeline.azurecr.io
-        #acr repositor name = python
-        # tag = automatically increase
-        #   docker build -t cicdpipeline.azurecr.io/python:${{ github.run_number }} .
-        #   docker push cicdpipeline.azurecr.io/python:${{ github.run_number }}
-      - name: Setup Helm and Kubectl
-        uses: azure/setup-helm@v1
-        with:
-         version: 'v3.7.0'
-      - name: Create Namespace
-        run: kubectl create namespace demochart
-      - name: Install Helm Diff Plugin
-        run: helm plugin install https://github.com/databus23/helm-diff --version v3.1.3
-      - name: Upgrade Helm Chart
-        run: |
-          helm upgrade --install  --namespace ${{ env.HELM_NAMESPACE }} --set image.tag=latest  ${{ env.HELM_CHART }}  "/home/runner/work/ci-cd-sathish/ci-cd-sathish/pythonchart"
-          
-
-
-
+    - run : node --version
+    - run : npm --version
+    - uses: actions/checkout@v3 
+    - run: npm install
+    - run : node app.js
