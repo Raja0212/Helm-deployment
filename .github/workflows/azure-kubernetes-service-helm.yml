@@ -20,14 +20,14 @@ jobs:
           login-server: cicdpipeline.azurecr.io
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
-#  #         
-#       - name: Login to Azure
-#         uses: Azure/login@v1
-#         with:
-#          creds: ${{ secrets.AZURE_CREDENTIALS }}
-#       - name: Get AKS credentials
-#         run: az aks get-credentials --resource-group rg-cicdpipeline-eus-action --name aks-cluster-pipeline    
-#  #        
+ #         
+      - name: Login to Azure
+        uses: Azure/login@v1
+        with:
+         creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Get AKS credentials
+        run: az aks get-credentials --resource-group rg-test-001 --name aks-cicdpipeline    
+ #        
 #       - name: Build and push Docker images
 #         uses: docker/build-push-action@v2
 #         with:
